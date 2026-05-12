@@ -7,10 +7,16 @@
             <h1 class="text-3xl font-black">Kelola Event</h1>
             <p class="text-slate-500 font-medium">Buat dan atur acara seru Anda di sini.</p>
         </div>
-        <button class="px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 active:scale-95 transition">
+        <a href="{{ route('admin.events.create') }}" class="px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 active:scale-95 transition">
             + Tambah Event Baru
-        </button>
+        </a>
     </header>
+
+    @if(session('success'))
+    <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-xl font-bold">
+        {{ session('success') }}
+    </div>
+    @endif
 
     <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
         <div class="px-8 py-6 bg-slate-50/50 border-b flex gap-4">
@@ -18,8 +24,6 @@
                 class="flex-1 px-5 py-3 rounded-xl border-slate-200 border bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
             <select class="px-5 py-3 rounded-xl border-slate-200 border bg-white outline-none">
                 <option>Semua Kategori</option>
-                <option>Musik</option>
-                <option>Workshop</option>
             </select>
         </div>
 
@@ -27,70 +31,69 @@
             <table class="w-full text-left border-collapse">
                 <thead class="bg-slate-50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                     <tr>
-                        <th class="px-8 py-4 w-16">No</th>
+                        <th class="px-8 py-4 w-16 text-center">No</th>
                         <th class="px-8 py-4">Poster</th>
                         <th class="px-8 py-4">Event</th>
-                        <th class="px-8 py-4">Harga / Stok</th>
+                        <th class="px-8 py-4">Harga</th> 
                         <th class="px-8 py-4">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y border-t">
+                    @forelse ($events as $index => $event)
                     <tr class="hover:bg-slate-50/50 transition">
-                        <td class="px-8 py-6 font-bold text-slate-400">1</td>
+                        <td class="px-8 py-6 font-bold text-slate-400 text-center">{{ $index + 1 }}</td>
+                        
                         <td class="px-8 py-6">
-                            <img src="{{ asset('template-amikomhub-share-mhs/assets/concert.png') }}" class="w-16 h-20 rounded-xl object-cover shadow-sm" alt="Concert">
+                            {{-- Ganti ke poster_path sesuai database kamu --}}
+                            @if($event->poster_path)
+                                <img src="{{ asset('posters/' . $event->poster_path) }}" class="w-16 h-20 rounded-xl object-cover shadow-sm border" alt="Poster">
+                            @else
+                                <div class="w-16 h-20 rounded-xl bg-slate-100 flex items-center justify-center text-[10px] text-slate-400 text-center px-1">No Image</div>
+                            @endif
                         </td>
+                        
                         <td class="px-8 py-6">
-                            <p class="font-black text-slate-800">Jazz Night 2024</p>
-                            <p class="text-xs text-slate-400">Musik • 16 Nov 2024</p>
+                            {{-- Ganti nama_event jadi title, dan tanggal jadi event_date --}}
+                            <p class="font-black text-slate-800 leading-tight">{{ $event->title }}</p>
+                            <p class="text-xs text-slate-400 mt-1">
+                                <span class="bg-slate-100 px-2 py-0.5 rounded text-[10px] font-bold uppercase mr-1">{{ $event->category->name ?? 'Event' }}</span>
+                                {{ \Carbon\Carbon::parse($event->event_date)->format('d M Y') }}
+                            </p>
                         </td>
+
                         <td class="px-8 py-6">
-                            <p class="font-bold text-indigo-600">Rp 150.000</p>
-                            <p class="text-xs text-slate-400">Stok: 42/100</p>
+                            {{-- Ganti harga jadi price --}}
+                            <p class="font-bold text-indigo-600">Rp {{ number_format($event->price, 0, ',', '.') }}</p>
                         </td>
+
                         <td class="px-8 py-6">
                             <div class="flex gap-2">
-                                <button class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition">
+                                <a href="{{ route('admin.events.edit', $event->id) }}" class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition inline-block">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 00-2 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
-                                </button>
-                                <button class="p-2.5 bg-rose-50 text-rose-600 rounded-xl hover:bg-rose-600 hover:text-white transition">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
-                                </button>
+                                </a>
+
+                                <form action="{{ route('admin.events.destroy', $event->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus event ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-2.5 bg-rose-50 text-rose-600 rounded-xl hover:bg-rose-600 hover:text-white transition">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
-                    <tr class="hover:bg-slate-50/50 transition">
-                        <td class="px-8 py-6 font-bold text-slate-400">2</td>
-                        <td class="px-8 py-6">
-                            <img src="{{ asset('template-amikomhub-share-mhs/assets/workshop.png') }}" class="w-16 h-20 rounded-xl object-cover shadow-sm" alt="Workshop">
-                        </td>
-                        <td class="px-8 py-6">
-                            <p class="font-black text-slate-800">AI & Future Workshop</p>
-                            <p class="text-xs text-slate-400">Tech • 26 Oct 2024</p>
-                        </td>
-                        <td class="px-8 py-6">
-                            <p class="font-bold text-indigo-600">Rp 50.000</p>
-                            <p class="text-xs text-slate-400">Stok: 12/50</p>
-                        </td>
-                        <td class="px-8 py-6">
-                            <div class="flex gap-2">
-                                <button class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 00-2 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                    </svg>
-                                </button>
-                                <button class="p-2.5 bg-rose-50 text-rose-600 rounded-xl hover:bg-rose-600 hover:text-white transition">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
-                                </button>
-                            </div>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-8 py-20 text-center">
+                            <img src="https://illustrations.popsy.co/gray/box.svg" class="w-32 mx-auto mb-4 opacity-20">
+                            <p class="text-slate-400 font-medium text-sm">Belum ada event yang ditambahkan.</p>
                         </td>
                     </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
