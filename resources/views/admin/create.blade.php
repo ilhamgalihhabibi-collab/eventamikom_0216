@@ -6,6 +6,17 @@
 
     <form action="{{ route('admin.events.store') }}" method="POST" enctype="multipart/form-data" class="bg-white p-8 rounded-2xl shadow-sm border">
         @csrf
+
+        @if($errors->any())
+    <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+        <p class="font-bold text-red-600 mb-2">Gagal menyimpan, periksa isian berikut:</p>
+        <ul class="list-disc list-inside text-red-500 text-sm">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>

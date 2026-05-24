@@ -34,7 +34,8 @@ class EventController extends Controller
             'description' => 'required',
             'price' => 'required|numeric',
             'stock' => 'required|numeric',
-            'poster_path' => 'nullable|image|max:2048',
+            // 'poster_path' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120',
+            'poster_path' => 'nullable|file|max:5120',
         ]);
 
         $data = $request->all();
@@ -73,7 +74,8 @@ class EventController extends Controller
             'description' => 'required',
             'price' => 'required|numeric',
             'stock' => 'required|numeric',
-            'poster_path' => 'nullable|image|max:2048',
+            // 'poster_path' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120',
+            'poster_path' => 'nullable|file|max:5120',
         ]);
 
         $data = $request->all();
