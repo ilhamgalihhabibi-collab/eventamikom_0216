@@ -34,7 +34,6 @@ class EventController extends Controller
             'description' => 'required',
             'price' => 'required|numeric',
             'stock' => 'required|numeric',
-            // 'poster_path' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120',
             'poster_path' => 'nullable|file|max:5120',
         ]);
 
@@ -52,7 +51,6 @@ class EventController extends Controller
         return redirect()->route('admin.events.index')->with('success', 'Event berhasil disimpan!');
     }
 
-    // INI FUNGSI YANG TADI HILANG/UNDEFINED
     public function edit(string $id)
     {
         $event = Event::findOrFail($id);
@@ -74,7 +72,6 @@ class EventController extends Controller
             'description' => 'required',
             'price' => 'required|numeric',
             'stock' => 'required|numeric',
-            // 'poster_path' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120',
             'poster_path' => 'nullable|file|max:5120',
         ]);
 
@@ -85,7 +82,6 @@ class EventController extends Controller
         }
 
         if ($request->hasFile('poster_path')) {
-            // Hapus poster lama jika ada
             if ($event->poster_path && file_exists(public_path('posters/' . $event->poster_path))) {
                 unlink(public_path('posters/' . $event->poster_path));
             }
