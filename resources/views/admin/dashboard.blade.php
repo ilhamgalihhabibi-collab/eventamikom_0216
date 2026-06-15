@@ -2,6 +2,11 @@
 
 @section('content')
 
+    {{-- Memberitahu VS Code bahwa $recentTransaksi adalah koleksi dari model Transaction --}}
+    @php
+        /** @var \Illuminate\Database\Eloquent\Collection|\App\Models\Transaction[] $recentTransaksi */
+    @endphp
+
     <header class="flex justify-between items-center mb-10">
         <div>
             <h1 class="text-3xl font-black">Dashboard Ringkasan</h1>
@@ -29,7 +34,7 @@
                 </svg>
             </div>
             <p class="text-slate-400 text-sm font-bold uppercase mb-1">Total Pendapatan</p>
-            <h3 class="text-2xl font-black">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</h3>
+            <h3 class="text-2xl font-black">Rp {{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}</h3>
         </div>
 
         <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
@@ -40,7 +45,7 @@
                 </svg>
             </div>
             <p class="text-slate-400 text-sm font-bold uppercase mb-1">Tiket Terjual</p>
-            <h3 class="text-2xl font-black">{{ number_format($tiketTerjual, 0, ',', '.') }}</h3>
+            <h3 class="text-2xl font-black">{{ number_format($tiketTerjual ?? 0, 0, ',', '.') }}</h3>
         </div>
 
         <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
@@ -51,7 +56,7 @@
                 </svg>
             </div>
             <p class="text-slate-400 text-sm font-bold uppercase mb-1">Total Event</p>
-            <h3 class="text-2xl font-black">{{ $totalEvents }} Event</h3>
+            <h3 class="text-2xl font-black">{{ $totalEvents ?? 0 }} Event</h3>
         </div>
 
         <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
@@ -62,7 +67,7 @@
                 </svg>
             </div>
             <p class="text-slate-400 text-sm font-bold uppercase mb-1">Pesanan Pending</p>
-            <h3 class="text-2xl font-black">{{ $pesananPending }} Pesanan</h3>
+            <h3 class="text-2xl font-black">{{ $pesananPending ?? 0 }} Pesanan</h3>
         </div>
 
     </div>
@@ -85,29 +90,29 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y border-t">
-                    @forelse($recentTransaksi as $trx)
+                    @forelse($recentTransaksi ?? [] as $trx)
                     <tr class="hover:bg-slate-50 transition">
                         <td class="px-8 py-6">
-                            <p class="font-bold uppercase tracking-wide text-sm">{{ $trx->customer_name }}</p>
-                            <p class="text-xs text-slate-400">{{ $trx->customer_email }}</p>
+                            <p class="font-bold uppercase tracking-wide text-sm">{{ data_get($trx, 'customer_name', '-') }}</p>
+                            <p class="text-xs text-slate-400">{{ data_get($trx, 'customer_email', '-') }}</p>
                         </td>
                         <td class="px-8 py-6 font-medium text-slate-600">
-                            {{ $trx->event->title ?? '-' }}
+                            {{ data_get($trx, 'event.title', '-') }}
                         </td>
                         <td class="px-8 py-6 text-slate-600">
-                            {{ $trx->qty }} tiket
+                            {{ data_get($trx, 'qty', 0) }} tiket
                         </td>
                         <td class="px-8 py-6">
-                            @if($trx->payment_status === 'success')
+                            @if(data_get($trx, 'payment_status') === 'success')
                                 <span class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-bold uppercase">Success</span>
-                            @elseif($trx->payment_status === 'pending')
+                            @elseif(data_get($trx, 'payment_status') === 'pending')
                                 <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-lg text-xs font-bold uppercase">Pending</span>
                             @else
-                                <span class="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-xs font-bold uppercase">{{ $trx->payment_status }}</span>
+                                <span class="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-xs font-bold uppercase">{{ data_get($trx, 'payment_status', 'unknown') }}</span>
                             @endif
                         </td>
                         <td class="px-8 py-6 font-black text-indigo-600">
-                            Rp {{ number_format($trx->total_price, 0, ',', '.') }}
+                            Rp {{ number_format(data_get($trx, 'total_price', 0), 0, ',', '.') }}
                         </td>
                     </tr>
                     @empty

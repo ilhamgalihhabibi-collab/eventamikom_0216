@@ -2,39 +2,57 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\TicketController;
+use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PartnerController;
-use App\Http\Controllers\Admin\EventController as AdminEventController;
 
-// Public routes
+// =========================================================================
+// RUTE PUBLIK (LANDING PAGE & KATEGORI)
+// =========================================================================
+
+// Route untuk Halaman Utama Publik Landing Page
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/kategori/{slug}', [HomeController::class, 'category'])->name('category.show');
-Route::get('/event-detail', [EventController::class, 'show'])->name('events.show');
-Route::get('/checkout', [EventController::class, 'checkout'])->name('checkout');
-Route::get('/my-ticket', [TicketController::class, 'index'])->name('ticket');
-// Admin routes
+
+// TAMBAHAN DISINI: Menyediakan route detail kategori publik yang dipanggil di app.blade.php baris 58
+Route::get('/category/{slug}', [HomeController::class, 'category'])->name('category.show');
+
+
+// =========================================================================
+// RUTE AUTENTIKASI & BACKEND ADMIN
+// =========================================================================
+
+// Pengalihan otomatis dari /login ke /admin/login
+Route::get('/login', function () {
+    return redirect()->route('admin.login');
+})->name('login');
+
+// Grouping untuk URL yang berawalan /admin
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Events resource
-    Route::resource('events', AdminEventController::class);
+    // --------------------------------------------------
+    // Rute Tamu (Bisa diakses sebelum login)
+    // --------------------------------------------------
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Categories - hanya route yang dibutuhkan (index, store, update, destroy)
-    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
-    Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
-    Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
-    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
-
-    // Partners resource
-    Route::get('/partners', [PartnerController::class, 'index'])->name('partners.index');
-    Route::post('/partners', [PartnerController::class, 'store'])->name('partners.store');
-    Route::put('/partners/{partner}', [PartnerController::class, 'update'])->name('partners.update');
-    Route::delete('/partners/{partner}', [PartnerController::class, 'destroy'])->name('partners.destroy');
-
-    Route::get('/transactions', function () {
-        return view('admin.transactions');
-    })->name('transactions');
+    // --------------------------------------------------
+    // Rute Terproteksi (Hanya bisa diakses jika sudah login & admin)
+    // --------------------------------------------------
+    Route::group(['middleware' => ['auth', 'admin']], function () {
+        
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        
+        // Resource routes untuk manajemen data
+        Route::resource('events', EventController::class);
+        Route::resource('categories', CategoryController::class);
+        Route::resource('partners', PartnerController::class);
+        
+        // Rute langsung memanggil view admin.transactions
+        Route::get('/transactions', function () {
+            return view('admin.transactions');
+        })->name('transactions');
+    });
 });
