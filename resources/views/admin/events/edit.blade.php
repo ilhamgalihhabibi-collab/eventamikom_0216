@@ -9,7 +9,8 @@
 
     @if ($errors->any())
         <div class="mb-6 p-4 bg-red-100 text-red-700 rounded-xl border border-red-200">
-            <ul class="list-disc pl-5 font-medium">
+            <p class="font-bold mb-2">Gagal memperbarui, periksa kembali isian Anda:</p>
+            <ul class="list-disc pl-5 font-medium text-sm">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -37,7 +38,7 @@
                     <label class="block text-sm font-bold text-slate-700 mb-2">Kategori</label>
                     <select name="category_id" class="w-full px-5 py-3 rounded-xl border-slate-200 border bg-white outline-none focus:ring-2 focus:ring-indigo-500" required>
                         @foreach($categories as $category)
-                            <option value="{{ $category->id }}" {{ $event->category_id == $category->id ? 'selected' : '' }}>
+                            <option value="{{ $category->id }}" {{ old('category_id', $event->category_id) == $category->id ? 'selected' : '' }}>
                                 {{ $category->name }}
                             </option>
                         @endforeach
@@ -47,11 +48,13 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Tanggal</label>
-                        <input type="date" name="event_date" value="{{ old('event_date', $event->event_date) }}" class="w-full px-5 py-3 rounded-xl border-slate-200 border bg-white outline-none focus:ring-2 focus:ring-indigo-500" required>
+                        {{-- FIX: Memecah data DATETIME dari database menjadi format YYYY-MM-DD untuk input date --}}
+                        <input type="date" name="event_date" value="{{ old('event_date', $event->date ? \Carbon\Carbon::parse($event->date)->format('Y-m-d') : '') }}" class="w-full px-5 py-3 rounded-xl border-slate-200 border bg-white outline-none focus:ring-2 focus:ring-indigo-500" required>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Jam</label>
-                        <input type="time" name="event_time" value="{{ old('event_time', $event->event_time) }}" class="w-full px-5 py-3 rounded-xl border-slate-200 border bg-white outline-none focus:ring-2 focus:ring-indigo-500" required>
+                        {{-- FIX: Memecah data DATETIME dari database menjadi format HH:MM untuk input time --}}
+                        <input type="time" name="event_time" value="{{ old('event_time', $event->date ? \Carbon\Carbon::parse($event->date)->format('H:i') : '') }}" class="w-full px-5 py-3 rounded-xl border-slate-200 border bg-white outline-none focus:ring-2 focus:ring-indigo-500" required>
                     </div>
                 </div>
             </div>
@@ -80,9 +83,10 @@
 
             <div class="mb-8">
                 <label class="block text-sm font-bold text-slate-700 mb-2">Poster Event</label>
+                {{-- FIX: Menggunakan jalur asset storage yang benar --}}
                 @if($event->poster_path)
                     <div class="mb-3">
-                        <img src="{{ asset('posters/' . $event->poster_path) }}" class="w-32 rounded-lg shadow-sm border">
+                        <img src="{{ asset('storage/' . $event->poster_path) }}" class="w-32 rounded-lg shadow-sm border" alt="Poster Saat Ini">
                         <p class="text-xs text-slate-400 mt-1">Poster saat ini</p>
                     </div>
                 @endif

@@ -6,16 +6,10 @@ NIM: 24.62.0216
 Link Laravel Cloud
 https://eventamikom-0216-main-yjzscj.free.laravel.cloud
 
-Tugas 1
-Katalog :
-Profil:
-Bantuan:
-Kontak:
-Tentang :
+Tugas 1 :  MODERN WORKFLOW: GIT & GITHUB sudah selesai
 
+Tugas 2 : LARAVEL ARCHITECTURE & ROUTING sudah selesai
 
-
-Tugas 2 : 
 
 Dashboard Admin :
 https://eventamikom-0216-main-yjzscj.free.laravel.cloud/admin/Kelola 
@@ -41,4 +35,9 @@ https://drive.google.com/drive/folders/1YkbE3uZNthHKCt92FrxFu8UKSBmQzbMZ?hl=ID
 
 TUGAS 5:Update CRUD Event: Perbaikan Edit dan Tampilan Index
 
+TUGAS 6: RELATIONSHIP ELOQUENT & FILTER DATA sudah selesai
+
+TUGAS 8: AUTHENTICATION & MIDDLEWARE sudah selesai
+
+TUGAS 9 : VALIDATION & FILE UPLOAD sudah selesai
 

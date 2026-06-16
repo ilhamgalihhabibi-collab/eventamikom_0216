@@ -44,25 +44,24 @@
                         <td class="px-8 py-6 font-bold text-slate-400 text-center">{{ $index + 1 }}</td>
                         
                         <td class="px-8 py-6">
-                            {{-- Ganti ke poster_path sesuai database kamu --}}
+                            {{-- FIX: Menggunakan asset('storage/...') agar link gambar tidak pecah --}}
                             @if($event->poster_path)
-                                <img src="{{ asset('posters/' . $event->poster_path) }}" class="w-16 h-20 rounded-xl object-cover shadow-sm border" alt="Poster">
+                                <img src="{{ asset('storage/' . $event->poster_path) }}" class="w-16 h-20 rounded-xl object-cover shadow-sm border" alt="Poster">
                             @else
                                 <div class="w-16 h-20 rounded-xl bg-slate-100 flex items-center justify-center text-[10px] text-slate-400 text-center px-1">No Image</div>
                             @endif
                         </td>
                         
                         <td class="px-8 py-6">
-                            {{-- Ganti nama_event jadi title, dan tanggal jadi event_date --}}
+                            {{-- FIX: Menggunakan nama kolom database yang benar ($event->title & $event->date) --}}
                             <p class="font-black text-slate-800 leading-tight">{{ $event->title }}</p>
                             <p class="text-xs text-slate-400 mt-1">
                                 <span class="bg-slate-100 px-2 py-0.5 rounded text-[10px] font-bold uppercase mr-1">{{ $event->category->name ?? 'Event' }}</span>
-                                {{ \Carbon\Carbon::parse($event->event_date)->format('d M Y') }}
+                                {{ \Carbon\Carbon::parse($event->date)->format('d M Y') }}
                             </p>
                         </td>
 
                         <td class="px-8 py-6">
-                            {{-- Ganti harga jadi price --}}
                             <p class="font-bold text-indigo-600">Rp {{ number_format($event->price, 0, ',', '.') }}</p>
                         </td>
 
