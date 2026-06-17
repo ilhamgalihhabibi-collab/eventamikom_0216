@@ -30,4 +30,14 @@ class HomeController extends Controller
 
         return view('welcome', compact('partners', 'categories', 'events', 'activeCategory'));
     }
+
+    // Ditambahkan untuk menangani detail event & form checkout tiket
+    public function show($id)
+    {
+        // Mengambil data event berdasarkan ID beserta relasi kategorinya
+        $event = Event::with('category')->findOrFail($id);
+
+        // Mengarahkan ke halaman form pemesanan tiket (checkout/create.blade.php)
+        return view('checkout.create', compact('event'));
+    }
 }

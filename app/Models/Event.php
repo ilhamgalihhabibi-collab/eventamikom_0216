@@ -9,22 +9,15 @@ class Event extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'category_id', 
-        'title', 
-        'slug', 
-        'organizer',
-        'event_date', 
-        'event_time', 
-        'location',
-        'description', 
-        'price', 
-        'stock', 
-        'poster_path'
-    ];
+    protected $guarded = [];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 }

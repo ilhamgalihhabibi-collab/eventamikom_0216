@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
-    protected $fillable = [
-        'order_id', 'event_id', 'customer_name', 'customer_email',
-        'customer_phone', 'qty', 'total_price', 'payment_status'
-    ];
+    use HasFactory;
+
+    // Membuka proteksi agar semua field (termasuk qty, status, snap_token) bisa disimpan
+    protected $guarded = [];
 
     public function event()
     {
