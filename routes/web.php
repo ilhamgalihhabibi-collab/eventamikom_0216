@@ -16,12 +16,13 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/category/{slug}', [HomeController::class, 'category'])->name('category.show');
 Route::get('/event/{id}', [HomeController::class, 'show'])->name('events.show');
 
-// --- RUTE PROSES CHECKOUT & MIDTRANS ---
 Route::get('/checkout/{event}', [CheckoutController::class, 'create'])->name('checkout.create');
 Route::post('/checkout/{event}', [CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/checkout/payment/{transaction}', [CheckoutController::class, 'payment'])->name('checkout.payment');
 // Menambahkan rute halaman sukses pembayaran (Menggunakan {transaction} agar konsisten dengan pola Anda)
 Route::get('/checkout/success/{transaction}', [CheckoutController::class, 'success'])->name('checkout.success');
+
+Route::get('/checkout/download/{transaction}', [CheckoutController::class, 'download'])->name('checkout.download');
 
 Route::get('/login', function () {
     return redirect()->route('admin.login');
@@ -40,6 +41,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::resource('events', EventController::class);
         Route::resource('categories', CategoryController::class);
         Route::resource('partners', PartnerController::class);
+        
+        
+        Route::get('/transactions/pdf', [TransactionController::class, 'downloadPDF'])->name('transactions.pdf');
         
         Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     });

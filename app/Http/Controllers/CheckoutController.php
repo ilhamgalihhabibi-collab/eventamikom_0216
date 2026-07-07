@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CheckoutController extends Controller
 {
@@ -101,4 +102,10 @@ class CheckoutController extends Controller
 
         return view('checkout.success', compact('transaction', 'categories'));
     }
+    public function download(Transaction $transaction)
+{
+    $transaction->load('event');
+    $pdf = Pdf::loadView('checkout.ticket', compact('transaction'));
+    return $pdf->download('Tiket-' . $transaction->order_id . '.pdf');
+}
 }

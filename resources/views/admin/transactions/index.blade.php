@@ -10,6 +10,15 @@
                 <h1 class="text-2xl font-bold text-slate-800">Manajemen Transaksi</h1>
                 <p class="text-sm text-slate-500">Daftar seluruh riwayat pemesanan tiket masuk aplikasi.</p>
             </div>
+            
+            <div>
+                <a href="{{ route('admin.transactions.pdf') }}" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-5 rounded-xl transition-all shadow-sm active:scale-95">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Cetak Laporan PDF
+                </a>
+            </div>
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -34,12 +43,12 @@
                                 <p class="font-semibold">{{ $transaction->customer_name }}</p>
                                 <p class="text-xs text-slate-400">{{ $transaction->customer_email }}</p>
                             </td>
-                            <td class="p-4 font-medium">{{ $transaction->event->title ?? 'Event Dihapus' }}</td>
+                            <td class="p-4 font-medium">{{ $transaction->event->title ?? $transaction->event->name ?? 'Event Dihapus' }}</td>
                             <td class="p-4 text-center">{{ $transaction->qty ?? 1 }}</td>
                             <td class="p-4 font-bold text-slate-900">Rp {{ number_format($transaction->total_price, 0, ',', '.') }}</td>
                             <td class="p-4">
                                 <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-700">
-                                    {{ $transaction->status ?? 'Success' }}
+                                    {{ strtoupper($transaction->status ?? 'SUCCESS') }}
                                 </span>
                             </td>
                         </tr>
