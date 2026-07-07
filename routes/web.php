@@ -9,7 +9,9 @@ use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\MidtransWebhookController;
 
+Route::post('/midtrans/callback', [MidtransWebhookController::class, 'handle']);
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/category/{slug}', [HomeController::class, 'category'])->name('category.show');
 Route::get('/event/{id}', [HomeController::class, 'show'])->name('events.show');

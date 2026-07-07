@@ -3,45 +3,30 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Event;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Set data default (kosongan) agar aman dari eror
-        $totalPendapatan = 0;
-        $tiketTerjual = 0;
-        $totalEvents = 0;
-        $pesananPending = 0;
-        $recentTransaksi = collect([]); // Membuat array kosong objek Laravel
+        $totalRevenue = Transaction::whereIn('status', ['settlement', 'success'])->sum('total_price');
 
-        // Cek jika model/tabel Event ada di database, baru kita hitung
-        if (class_exists('App\Models\Event')) {
-            $totalEvents = \App\Models\Event::count();
-        }
+        $ticketsSold = Transaction::whereIn('status', ['settlement', 'success'])->count();
 
-        // Cek jika model/tabel Transaction ada di database, baru kita hitung
-        if (class_exists('App\Models\Transaction')) {
-            $totalPendapatan = \App\Models\Transaction::where('payment_status', 'success')->sum('total_price') ?? 0;
-            $tiketTerjual = \App\Models\Transaction::where('payment_status', 'success')->sum('qty') ?? 0;
-            $pesananPending = \App\Models\Transaction::where('payment_status', 'pending')->count() ?? 0;
-            
-            // Ambil 5 transaksi terbaru beserta relasi eventnya
-            $recentTransaksi = \App\Models\Transaction::with('event')
-                ->orderBy('created_at', 'desc')
-                ->take(5)
-                ->get();
-        }
+        $activeEvents = Event::where('created_at', '>=', now()->subDays(30))->count();
 
-        // Kirim semua data ke view
+        $pendingOrders = Transaction::where('status', 'pending')->count();
+
+        $recentTransactions = Transaction::with('event')->latest()->take(5)->get();
+
         return view('admin.dashboard', compact(
-            'totalPendapatan',
-            'tiketTerjual',
-            'totalEvents',
-            'pesananPending',
-            'recentTransaksi'
+            'totalRevenue', 
+            'ticketsSold', 
+            'activeEvents', 
+            'pendingOrders', 
+            'recentTransactions'
         ));
     }
 }
