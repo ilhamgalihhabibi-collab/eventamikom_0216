@@ -14,9 +14,12 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/category/{slug}', [HomeController::class, 'category'])->name('category.show');
 Route::get('/event/{id}', [HomeController::class, 'show'])->name('events.show');
 
+// --- RUTE PROSES CHECKOUT & MIDTRANS ---
 Route::get('/checkout/{event}', [CheckoutController::class, 'create'])->name('checkout.create');
 Route::post('/checkout/{event}', [CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/checkout/payment/{transaction}', [CheckoutController::class, 'payment'])->name('checkout.payment');
+// Menambahkan rute halaman sukses pembayaran (Menggunakan {transaction} agar konsisten dengan pola Anda)
+Route::get('/checkout/success/{transaction}', [CheckoutController::class, 'success'])->name('checkout.success');
 
 Route::get('/login', function () {
     return redirect()->route('admin.login');
